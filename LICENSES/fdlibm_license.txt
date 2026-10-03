@@ -1,0 +1,11 @@
+FDLIBM (Freely Distributable LIBM) is a C math library 
+for machines that support IEEE 754 floating-point arithmetic. 
+In this release, only double precision is supported.
+
+FDLIBM is intended to provide a reasonably portable (see 
+assumptions below), reference quality (below one ulp for
+major functions like sin,cos,exp,log) math library 
+(libm.a).  For a copy of FDLIBM, please see
+	http://www.netlib.org/fdlibm/
+or
+	http://www.validlab.com/software/
