@@ -82,6 +82,43 @@ manifest bundled inside the package):
   `OpenCourant_extlib` release `v67-compat` (2026-10-03); rehosted here
   byte-identical (same SHA-256).
 
+### Reader build versions
+
+The hm_reader binaries embed build IDs that pin their actual vintage,
+which is older than the v67 git base of the package:
+
+| Component | Build ID | Source release | Effective extlib era |
+|---|---|---|---|
+| `libhm_reader_linux64.so` | `20260602_fcb3b29a` | `latest-20260615` (commit `453d42d`) | ~v60 |
+| `hm_reader_win64.dll` | `20260710_d899773e` | `latest-20260728` (commit `a62b27e`) | ~v70 |
+
+Consequences:
+
+- The Linux reader lacks `cpp_is_part_with_elements`,
+  `cpp_sale_mesh_create` and `cpp_get_include_file_by_index`; OpenCourant
+  builds with the `HM_READER_*` compatibility options enabled.
+- The win64 reader exports all of these except
+  `cpp_get_include_file_by_index`.
+- A reader satisfying the current Starter without compatibility options
+  would require extlib v76 or later (2026-09-11 onward). Those binaries
+  only existed in upstream release assets, which are no longer available.
+  If you hold `OpenRadioss_linux64.zip` from `latest-20260728` or newer, or
+  an `extlib/` folder from a source build made between 2026-09-11 and
+  2026-10-01, please open an issue.
+
+## Upstream git history (branch `upstream-v82`)
+
+The branch [`upstream-v82`](../../tree/upstream-v82) preserves the complete
+upstream `OpenRadioss_extlib` git history through the final v82 delivery
+(2026-09-22, commit `f2fa2cd00dd5937d96e521f163a191f2dee90148`, 111
+commits), recovered from the GitHub fork network before it could be garbage
+collected. The surviving fork heads stop at v67; the v67→v82 range adds
+rebuilt H3D writer libraries (linux64/linuxa64/win64), updated H3D headers
+including the new `h3dpublic_import.h`, and Siemens-copyrighted license
+texts. Tags `upstream-v67` and `upstream-v82` mark the two reference
+points. Note that hm_reader binaries were never tracked in the upstream git
+tree; they were injected from an internal artifact store at release time.
+
 ## Validation
 
 With this package, OpenCourant builds Starter and Engine on Linux
