@@ -84,27 +84,33 @@ manifest bundled inside the package):
 
 ### Reader build versions
 
-The hm_reader binaries embed build IDs that pin their actual vintage,
-which is older than the v67 git base of the package:
+The hm_reader binaries embed build IDs that pin their actual vintage.
+Since package `v82-hybrid-r2`, both platforms use the v70 reader build:
 
-| Component | Build ID | Source release | Effective extlib era |
+| Component | Build ID | Source | Effective extlib era |
 |---|---|---|---|
-| `libhm_reader_linux64.so` | `20260602_fcb3b29a` | `latest-20260615` (commit `453d42d`) | ~v60 |
-| `hm_reader_win64.dll` | `20260710_d899773e` | `latest-20260728` (commit `a62b27e`) | ~v70 |
+| `libhm_reader_linux64.so` | `20260710_d899773e` | community-archived original v70 `extlib.zip` (see release [`upstream-v70`](../../releases/tag/upstream-v70)) | v70 |
+| `hm_reader_win64.dll` | `20260710_d899773e` | `latest-20260728` (commit `a62b27e`) | v70 |
+
+Historical: package `v67-compat` and `v82-hybrid` shipped a v60-era Linux
+reader (build `20260602_fcb3b29a`, recovered from Docker image
+`dheiny/openradioss-solver:1.0.37`).
 
 Consequences:
 
-- The Linux reader lacks `cpp_is_part_with_elements`,
-  `cpp_sale_mesh_create` and `cpp_get_include_file_by_index`; OpenCourant
-  builds with the `HM_READER_*` compatibility options enabled.
-- The win64 reader exports all of these except
-  `cpp_get_include_file_by_index`.
+- Both v70 readers export `cpp_is_part_with_elements`; the legacy part-API
+  fallback is no longer needed.
+- Both lack `cpp_get_include_file_by_index` (added upstream around extlib
+  v76); the include-file listing uses the legacy fallback.
+- `/ALE/STRUCTURED_MESH` remains disabled: the v70 readers export
+  `cpp_sale_mesh_create`, but a Windows trial with this build produced
+  invalid node coordinates and no QA reference exists to validate the
+  generated meshes.
 - A reader satisfying the current Starter without compatibility options
   would require extlib v76 or later (2026-09-11 onward). Those binaries
   only existed in upstream release assets, which are no longer available.
-  If you hold `OpenRadioss_linux64.zip` from `latest-20260728` or newer, or
-  an `extlib/` folder from a source build made between 2026-09-11 and
-  2026-10-01, please open an issue.
+  If you hold an `extlib.zip` v71-v82 or an `extlib/` folder from a source
+  build made between 2026-09-11 and 2026-10-01, please open an issue.
 
 ## Upstream git history (branch `upstream-v82`)
 
