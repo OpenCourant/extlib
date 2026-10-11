@@ -11,24 +11,37 @@ verifies its SHA-256 checksum before use.
 
 | Release | File | SHA-256 |
 |---|---|---|
-| [`v67-compat`](../../releases/tag/v67-compat) | `extlib.zip` | `6ebf4f3d5caa3f4c8608e6d5dafc360c055272cbfc754120181435dd8f51e4cd` |
+| [`upstream-v82-extlib`](../../releases/tag/upstream-v82-extlib) | `extlib.zip` | `2d0365018e67dd4813e6a2cf2ebf19d00d4771aa1aeb9b9706b7ea45fbb56982` |
 
-This is the **v67 compatibility set**: the newest external-library set that
-remained recoverable from public sources after the upstream
-`OpenRadioss/OpenRadioss_extlib` repository (and its release archives,
-including v82) were deleted from GitHub.
+This is the **pristine official extlib v82** — the final upstream delivery
+(2026-09-22), recovered from a community-donated source checkout and served
+unmodified. Its hm_reader binaries (all three platforms, build
+`20260918_f907fe76`) provide the complete selection API: OpenCourant builds
+with **no reader compatibility fallbacks**.
+
+**The reader recovery effort is complete.** Every upstream artifact that
+mattered has been recovered, authenticated and archived (see
+[Archive releases](#archive-releases) below). Thank you to everyone who dug
+through their downloads folders.
 
 ### Known limitation
 
-The v67 reader cannot generate `/ALE/STRUCTURED_MESH`. Compatibility builds
-of OpenCourant reject that keyword explicitly rather than silently
-producing invalid behavior.
+`/ALE/STRUCTURED_MESH` is rejected explicitly by OpenCourant builds. The
+feature is non-functional in the shipped readers: testing against the v82
+reader (with its debug channel enabled) shows input parsing succeeds but
+mesh generation emits degenerate output — all generated nodes collapse to a
+single coordinate — matching the invalid-node-coordinates failure
+previously observed with the v70 win64 reader. The feature shipped upstream
+without tests, examples or documentation, and its generator never appeared
+in the open-reader source. An explicit rejection beats silently wrong
+meshes; a from-scratch implementation in the open reader is the eventual
+fix.
 
 ## Package contents
 
 | Component | Type | License |
 |---|---|---|
-| hm_reader (linux64 `.so`, win64 `.dll`/`.lib`) | input reader, binary only | Altair limited-use notice |
+| hm_reader (linux64/linuxa64 `.so`, win64 `.dll`/`.lib`) | input reader, binary only | Altair limited-use notice |
 | H3D (headers, linux64/linuxa64 `.so`, win64 `.dll`) | result file I/O, binary + headers | Altair limited-use notice |
 | APR (`libapr-1.so.0`) | hm_reader dependency | Apache-2.0 |
 | Boost 1.70.0 | headers + static libs | BSL-1.0 |
@@ -39,16 +52,15 @@ producing invalid behavior.
 | zlib | shared/static libs | zlib |
 
 Full license texts are in [`LICENSES/`](LICENSES/) and are also bundled
-inside the package (`extlib/license/` and per-component `notices/`
-directories).
+inside the package (`extlib/license/`).
 
 ### Altair license terms
 
-The hm_reader and H3D components are Copyright Altair Engineering Inc. and
-are distributed under a limited-use notice:
+The hm_reader and H3D components are Copyright Altair Engineering Inc. /
+Siemens and are distributed under a limited-use notice:
 
-> Altair Engineering Inc. grants to third parties limited permission to
-> use [HMR/H3D] solely in connection with OpenRadioss software.
+> grants to third parties limited permission to use [HMR/H3D] solely in
+> connection with OpenRadioss software.
 
 OpenCourant is the community continuation of OpenRadioss. These components
 are redistributed here, unmodified and with all original notices intact,
@@ -57,60 +69,59 @@ distribution channels were removed.
 
 ## Provenance
 
-The v67-compat package was assembled from the following sources (recorded
-in [`EXTLIB_VERSION.json`](EXTLIB_VERSION.json), which is a copy of the
-manifest bundled inside the package):
+The current package is the unmodified official v82 `extlib.zip`:
 
-- **Base library set (v67)**: git revision
-  `f10f11a4ba6943e2d950ac12da47461ea7b8f05d` of the `OpenRadioss_extlib`
-  repository, preserved by public forks after the upstream repository was
-  deleted (fork network of `xupeiwust/OpenRadioss_extlib`).
-- **hm_reader linux64** (`libhm_reader_linux64.so`,
-  SHA-256 `37a8fcc2da2fc4e3581ae668176204fa4d206ac866ee4da53a1e988a543195ca`)
-  and `libapr-1.so.0`
-  (SHA-256 `f76d9796e59b675cb374fc3f3403f7878bdcb348e4c6f8af017c3dc3046be89c`):
-  recovered from Docker image `dheiny/openradioss-solver:1.0.37`
-  (manifest `sha256:5de9321d…`, layer `sha256:a54673c1…`), which packaged
-  the upstream `latest-20260615` release.
-- **hm_reader win64** (`hm_reader_win64.dll`,
-  SHA-256 `ee7279ed3f5271217a8420358bbea69043470a08a6a9e641ba574f3b5d304eac`):
-  extracted from the official `OpenRadioss_win64.zip` of upstream release
-  `latest-20260728` (archive SHA-256 `04dfecb0…`), before the upstream
-  repository was deleted.
-- Package assembled and first published by
-  [@AlexanderHuels](https://github.com/AlexanderHuels) as
-  `OpenCourant_extlib` release `v67-compat` (2026-10-03); rehosted here
-  byte-identical (same SHA-256).
+- Recovered from a community-donated OpenRadioss source checkout built
+  2026-09-28 from upstream main at commit `1a0d691` — the exact commit
+  OpenCourant continues from. The checkout's manifest pins the official
+  v82 download URL.
+- Authenticated against an independent source: the contained
+  `libh3dwriter.so` (linux64) is byte-identical to the blob preserved in
+  the recovered upstream git history (branch
+  [`upstream-v82`](../../tree/upstream-v82), `9975a8fa…`), and internal
+  file dates match the v82 delivery day.
+- Reader build ID `20260918_f907fe76` across linux64, linuxa64 and win64.
 
 ### Reader build versions
 
-The hm_reader binaries embed build IDs that pin their actual vintage.
-Since package `v82-hybrid-r2`, both platforms use the v70 reader build:
+| Component | Build ID | Effective extlib era |
+|---|---|---|
+| `libhm_reader_linux64.so` | `20260918_f907fe76` | v82 |
+| `libhm_reader_linuxa64.so` | `20260918_f907fe76` | v82 |
+| `hm_reader_win64.dll` | `20260918_f907fe76` | v82 |
 
-| Component | Build ID | Source | Effective extlib era |
-|---|---|---|---|
-| `libhm_reader_linux64.so` | `20260710_d899773e` | community-archived original v70 `extlib.zip` (see release [`upstream-v70`](../../releases/tag/upstream-v70)) | v70 |
-| `hm_reader_win64.dll` | `20260710_d899773e` | `latest-20260728` (commit `a62b27e`) | v70 |
+All reader APIs the Starter uses are present (`cpp_is_part_with_elements`,
+`cpp_get_include_file_by_index`, `cpp_sale_mesh_create`, the rigid-part
+pair); the `HM_READER_*` compatibility options in the main repository
+default OFF and exist only for builds against the older archived readers
+below.
 
-Historical: package `v67-compat` and `v82-hybrid` shipped a v60-era Linux
-reader (build `20260602_fcb3b29a`, recovered from Docker image
-`dheiny/openradioss-solver:1.0.37`).
+## Package history
 
-Consequences:
+Earlier OpenCourant packages, superseded by the pristine v82 but kept for
+reproducibility:
 
-- Both v70 readers export `cpp_is_part_with_elements`; the legacy part-API
-  fallback is no longer needed.
-- Both lack `cpp_get_include_file_by_index` (added upstream around extlib
-  v76); the include-file listing uses the legacy fallback.
-- `/ALE/STRUCTURED_MESH` remains disabled: the v70 readers export
-  `cpp_sale_mesh_create`, but a Windows trial with this build produced
-  invalid node coordinates and no QA reference exists to validate the
-  generated meshes.
-- A reader satisfying the current Starter without compatibility options
-  would require extlib v76 or later (2026-09-11 onward). Those binaries
-  only existed in upstream release assets, which are no longer available.
-  If you hold an `extlib.zip` v71-v82 or an `extlib/` folder from a source
-  build made between 2026-09-11 and 2026-10-01, please open an issue.
+| Package | Readers | Notes |
+|---|---|---|
+| [`v82-hybrid-r4`](../../releases/tag/v82-hybrid-r4) | v70 (linux64/win64), v70 (linuxa64) | v82 git-tree libraries + recovered v70 readers |
+| [`v82-hybrid-r3`](../../releases/tag/v82-hybrid-r3) | v70 (x86/win), Feb-2026 (linuxa64) | first ARM reader |
+| [`v82-hybrid-r2`](../../releases/tag/v82-hybrid-r2) | v70 (linux64/win64) | Linux reader upgraded v60 → v70 |
+| [`v82-hybrid`](../../releases/tag/v82-hybrid) | v60 (linux64), v70 (win64) | v82 git-tree H3D restoration |
+| [`v67-compat`](../../releases/tag/v67-compat) | v60 (linux64), v70 (win64) | original community rescue package, first published by [@AlexanderHuels](https://github.com/AlexanderHuels) |
+
+## Archive releases
+
+Pristine upstream artifacts, preserved with published SHA-256 digests:
+
+| Release | Contents |
+|---|---|
+| [`upstream-v82-extlib`](../../releases/tag/upstream-v82-extlib) | official `extlib.zip` v82 (current package) |
+| [`upstream-v70`](../../releases/tag/upstream-v70) | official `extlib.zip` v70 |
+| [`upstream-latest-20260728-win64`](../../releases/tag/upstream-latest-20260728-win64) | official `OpenRadioss_win64.zip`, last stable release |
+| [`upstream-latest-20260728-linux64`](../../releases/tag/upstream-latest-20260728-linux64) | official `OpenRadioss_linux64.zip`, last stable release |
+| [`upstream-latest-20260728-linuxa64`](../../releases/tag/upstream-latest-20260728-linuxa64) | official `OpenRadioss_linuxa64.zip` + source tar, last stable release |
+| [`upstream-linux64-20260320`](../../releases/tag/upstream-linux64-20260320) | March 2026 linux64 release package |
+| [`upstream-linuxa64-20260320`](../../releases/tag/upstream-linuxa64-20260320) | March 2026 linuxa64 release package |
 
 ## Upstream git history (branch `upstream-v82`)
 
@@ -118,17 +129,12 @@ The branch [`upstream-v82`](../../tree/upstream-v82) preserves the complete
 upstream `OpenRadioss_extlib` git history through the final v82 delivery
 (2026-09-22, commit `f2fa2cd00dd5937d96e521f163a191f2dee90148`, 111
 commits), recovered from the GitHub fork network before it could be garbage
-collected. The surviving fork heads stop at v67; the v67→v82 range adds
-rebuilt H3D writer libraries (linux64/linuxa64/win64), updated H3D headers
-including the new `h3dpublic_import.h`, and Siemens-copyrighted license
-texts. Tags `upstream-v67` and `upstream-v82` mark the two reference
+collected. Tags `upstream-v67` and `upstream-v82` mark the two reference
 points. Note that hm_reader binaries were never tracked in the upstream git
 tree; they were injected from an internal artifact store at release time.
 
 ## Validation
 
-With this package, OpenCourant builds Starter and Engine on Linux
-(GCC/GFortran 11, double precision) and the full MiniQA suite passes
-(81/81). See OpenCourant PR
-[#3](https://github.com/OpenCourant/OpenCourant/pull/3) for the
-compatibility changes required in the main repository.
+Every package revision was validated before adoption: Starter and Engine
+builds on all supported platforms and the full MiniQA regression suite
+(81/81) gate each change, in CI and in the release pipeline.
