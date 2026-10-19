@@ -1,5 +1,8 @@
 # OpenCourant external libraries (extlib)
 
+OpenCourant is an Incubator Project of the
+[Rocky Enterprise Software Foundation](https://www.resf.org).
+
 Prebuilt external libraries required to build and run OpenCourant Starter
 and Engine. The package is distributed as a release asset of this
 repository and downloaded automatically at build time by
